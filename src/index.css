@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.App {
+  @apply text-white;
+}
+
+header {
+  @apply bg-cover h-60 pt-10;
+}
+
+.searchGrp {
+  @apply w-4/12 flex flex-row items-center bg-mainBg text-textColor p-2 mx-auto  rounded-lg gap-2;
+}
+
+input {
+  @apply w-full bg-transparent focus:outline-0;
+}
+
+main {
+  @apply px-20 pb-10 bg-mainBg min-h-96 relative;
+}
+
+.profileDetails {
+  @apply absolute -top-10 flex flex-row items-end gap-10;
+}
+
+.profileImg {
+  @apply w-24 h-24 rounded-xl border-8 border-b-0 border-mainBg;
+}
+
+.detailsGrp {
+  @apply flex flex-row items-end gap-5;
+}
+
+.detail {
+  @apply py-2 px-5 rounded-lg flex flex-row bg-detailBg;
+}
+
+.label {
+  @apply pr-3 border-r border-white capitalize text-textColor;
+}
+.result {
+  @apply pl-3;
+}
+
+.repositoryGrp {
+  @apply grid grid-cols-2 mt-8;
+}
+
+.repository {
+  @apply flex flex-col gap-5 rounded-lg p-3 bg-black;
+}
+
+.iconGrp {
+  @apply flex flex-row gap-3 items-center;
+}
+
+.icon {
+  @apply flex flex-row gap-1 items-center;
+}
