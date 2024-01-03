@@ -11,7 +11,7 @@ header {
 }
 
 .searchGrp {
-  @apply w-4/12 flex flex-row items-center bg-mainBg text-textColor p-2 mx-auto  rounded-lg gap-2;
+  @apply w-10/12 md:w-2/3 lg:w-4/12 flex flex-row items-center bg-mainBg text-textColor p-2 mx-auto  rounded-lg gap-2;
 }
 
 input {
@@ -19,19 +19,19 @@ input {
 }
 
 main {
-  @apply px-20 pb-10 bg-mainBg min-h-96 relative;
+  @apply px-5 lg:px-20 pb-10 bg-mainBg min-h-screen lg:min-h-96 relative;
 }
 
 .profileDetails {
-  @apply absolute -top-10 flex flex-row items-end gap-10;
+  @apply absolute -top-10 flex flex-row md:items-end gap-5 md:gap-10;
 }
 
 .profileImg {
-  @apply w-24 h-24 rounded-xl border-8 border-b-0 border-mainBg;
+  @apply w-20 md:w-24 h-20 md:h-24 rounded-xl border-8 border-b-0 border-mainBg;
 }
 
 .detailsGrp {
-  @apply flex flex-row items-end gap-5;
+  @apply flex flex-col md:flex-row items-start lg:items-end gap-5 mt-20 md:mt-0 text-sm md:text-base;
 }
 
 .detail {
@@ -46,15 +46,23 @@ main {
 }
 
 .repositoryGrp {
-  @apply grid grid-cols-2 mt-8;
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-8 mt-8;
 }
 
 .repository {
-  @apply flex flex-col gap-5 rounded-lg p-3 bg-black;
+  @apply flex flex-col justify-between gap-3 rounded-lg p-3 bg-gradient-to-r from-detailBg to-repoColor cursor-pointer hover:scale-105 transition ease-in-out duration-200;
+}
+
+.repoName {
+  @apply font-bold;
+}
+
+.note {
+  @apply text-sm;
 }
 
 .iconGrp {
-  @apply flex flex-row gap-3 items-center;
+  @apply flex flex-row gap-5 items-center text-sm;
 }
 
 .icon {

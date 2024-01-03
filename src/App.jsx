@@ -90,6 +90,7 @@ function App() {
   );
 
   const [username, setUsername] = useState("github");
+
   const [bio, setBio] = useState("How people build software");
   const [displayName, setDisplayName] = useState("GitHub");
   const [profileImg, setProfileImg] = useState(heroImg);
@@ -100,21 +101,51 @@ function App() {
   const [apiLink, setApiLink] = useState(
     `https://api.github.com/users/${username}`
   );
-  const [repoApi, setRepoApi] = useState("");
-  const [repoError, setRepoError] = useState(null);
-  const [isRepoLoading, setIsRepoLoading] = useState(true);
 
   const [apiData, setApidData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [wrongUsername, setWrongUsername] = useState(false);
+  const [timeout, setTimeout] = useState(false);
+
+  const [repoApi, setRepoApi] = useState("");
+  const [repoData, setRepoData] = useState(null);
+  const [repoError, setRepoError] = useState(null);
+  const [isRepoLoading, setIsRepoLoading] = useState(true);
+
   const fetchData = async () => {
     try {
-      const response = await fetch(apiLink);
+      const response = await fetch(apiLink, {
+        headers: {
+          Authorization: `Bearer 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`,
+        },
+      });
 
       if (!response.ok) {
-        throw new Error("A problem was encountered while loading");
+        if (response.status === 404) {
+          throw new Error(`${username} not found`);
+        } else if (response.status === 403) {
+          throw new Error(`timeout`);
+        } else {
+          throw new Error(
+            `Request failed with status ${response.status} (${response.statusText})`
+          );
+        }
       }
+
+      //WRONG USERNAME LOGIC
+      // if (response.status === 404) {
+      //   setWrongUsername(true);
+      // } else if (response.ok) {
+      //   setWrongUsername(false);
+      // }
+
+      // if (response.status === 403) {
+      //   setTimeout(true);
+      // } else if (response.ok) {
+      //   setTimeout(false);
+      // }
 
       const data = await response.json();
       console.log(data);
@@ -130,6 +161,7 @@ function App() {
       setLocation(data.location);
     } catch (err) {
       setError(err);
+      console.log(err);
     } finally {
       setIsLoading(false);
     }
@@ -143,8 +175,9 @@ function App() {
         throw new Error("Repo API encountered an issue");
       }
 
-      const repoData = await response.json();
-      console.log(repoData);
+      const repository = await response.json();
+      console.log(repository);
+      setRepoData(repository);
     } catch (err) {
       setRepoError(err);
     } finally {
@@ -171,7 +204,7 @@ function App() {
       <header className="bg-[url('./assets/hero-image-github-profile.png')]">
         <form
           className="searchGrp"
-          onSubmit={() => {
+          onSubmit={(e) => {
             e.preventDefault();
             fetchData();
             setUsername("");
@@ -199,57 +232,82 @@ function App() {
         </form>
       </header>
 
-      <main>
-        <div className="profileDetails">
-          <img src={profileImg} alt="profile image" className="profileImg" />
+      {isLoading && (
+        <main className="loadingScreen">
+          <h1 className="w-fit mx-auto pt-20 text-6xl font-bold">LOADING</h1>
+        </main>
+      )}
 
-          <div className="detailsGrp">
-            <div className="detail">
-              <p className="label">followers</p>
-              <p className="result">{followers}</p>
-            </div>
+      {!isLoading && !timeout && !wrongUsername && (
+        <main>
+          <div className="profileDetails">
+            <img src={profileImg} alt="profile image" className="profileImg" />
 
-            <div className="detail">
-              <p className="label">following</p>
-              <p className="result">{following}</p>
-            </div>
-
-            <div className="detail">
-              <p className="label">location</p>
-              <p className="result">{location}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="pt-20">
-          <h1 className="text-4xl">{displayName}</h1>
-          <p className="text-sm">{bio}.</p>
-        </div>
-
-        <div className="repositoryGrp">
-          <div className="repository">
-            <h1 className="repoName">.github</h1>
-
-            <p className="note">
-              Community health files for @Github organization
-            </p>
-
-            <div className="iconGrp">
-              <div className="icon">
-                {iconNesting}
-                2000
+            <div className="detailsGrp">
+              <div className="detail">
+                <p className="label">followers</p>
+                <p className="result">{followers}</p>
               </div>
 
-              <div className="icon">
-                {iconStar}
-                2000
+              <div className="detail">
+                <p className="label">following</p>
+                <p className="result">{following}</p>
               </div>
 
-              <div className="icon">last updated 4 days ago</div>
+              <div className="detail">
+                <p className="label">location</p>
+                <p className="result">{location}</p>
+              </div>
             </div>
           </div>
-        </div>
-      </main>
+
+          <div className="pt-60 md:pt-20">
+            <h1 className="text-4xl">{displayName}</h1>
+            <p className="text-sm pt-2">{bio}.</p>
+          </div>
+
+          <div className="repositoryGrp">
+            {repoData !== null &&
+              repoData.map((element, index) => (
+                <a href={element.clone_url} className="repository" key={index}>
+                  <h1 className="repoName">{element.name}</h1>
+
+                  <p className="note">{element.description}</p>
+
+                  <div className="iconGrp">
+                    <div className="icon">
+                      {iconNesting}
+                      {element.forks}
+                    </div>
+
+                    <div className="icon">
+                      {iconStar}
+                      {element.stargazers_count}
+                    </div>
+
+                    <div className="icon">last updated 4 days ago</div>
+                  </div>
+                </a>
+              ))}
+          </div>
+        </main>
+      )}
+
+      {/* {wrongUsername && !isLoading && (
+        <main className="loadingScreen">
+          <h1 className="w-fit mx-auto pt-20 text-6xl font-bold">
+            USER DOES NOT EXIST
+          </h1>
+        </main>
+      )}
+
+      {timeout && !isLoading && (
+        <main className="loadingScreen">
+          <h1 className="w-fit mx-auto pt-20 text-6xl font-bold">
+            TIMEOUT TRY AGAIN LATER
+          </h1>
+        </main>
+      )} */}
     </div>
   );
 }
