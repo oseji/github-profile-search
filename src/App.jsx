@@ -191,6 +191,7 @@ function App() {
           onSubmit={(e) => {
             e.preventDefault();
             fetchData();
+            setShowAll(false);
             setUsername("");
           }}
         >
@@ -198,6 +199,7 @@ function App() {
             className="cursor-pointer"
             onClick={() => {
               fetchData();
+              setShowAll(false);
               setUsername("");
             }}
           >

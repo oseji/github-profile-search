@@ -15,7 +15,7 @@ header {
 }
 
 input {
-  @apply w-full bg-transparent focus:outline-0;
+  @apply w-full bg-transparent focus:outline-0 focus:border-0;
 }
 
 main {
