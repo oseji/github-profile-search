@@ -159,7 +159,7 @@ function App() {
       }
 
       const repository = await response.json();
-      //console.log(repository);
+      console.log(repository);
       setRepoData(repository);
     } catch (err) {
       setRepoError(err);
@@ -271,7 +271,9 @@ function App() {
                       {element.stargazers_count}
                     </div>
 
-                    <div className="icon">last updated 4 days ago</div>
+                    <div className="icon">
+                      last updated at {element.pushed_at.slice(0, 10)}
+                    </div>
                   </div>
                 </a>
               ))}
