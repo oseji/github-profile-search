@@ -102,25 +102,21 @@ function App() {
     `https://api.github.com/users/${username}`
   );
 
-  const [apiData, setApidData] = useState(null);
+  const [apiData, setApidData] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [wrongUsername, setWrongUsername] = useState(false);
-  const [timeout, setTimeout] = useState(false);
-
   const [repoApi, setRepoApi] = useState("");
-  const [repoData, setRepoData] = useState(null);
+  const [repoData, setRepoData] = useState([]);
   const [repoError, setRepoError] = useState(null);
   const [isRepoLoading, setIsRepoLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
+  const reposToShow = showAll ? repoData : repoData.slice(0, 4);
+  const buttonText = showAll ? "Hide" : "Show all repositories";
 
   const fetchData = async () => {
     try {
-      const response = await fetch(apiLink, {
-        headers: {
-          Authorization: `Bearer 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`,
-        },
-      });
+      const response = await fetch(apiLink);
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -134,21 +130,8 @@ function App() {
         }
       }
 
-      //WRONG USERNAME LOGIC
-      // if (response.status === 404) {
-      //   setWrongUsername(true);
-      // } else if (response.ok) {
-      //   setWrongUsername(false);
-      // }
-
-      // if (response.status === 403) {
-      //   setTimeout(true);
-      // } else if (response.ok) {
-      //   setTimeout(false);
-      // }
-
       const data = await response.json();
-      console.log(data);
+      //console.log(data);
 
       setApidData(data);
 
@@ -161,7 +144,7 @@ function App() {
       setLocation(data.location);
     } catch (err) {
       setError(err);
-      console.log(err);
+      alert(err);
     } finally {
       setIsLoading(false);
     }
@@ -176,13 +159,18 @@ function App() {
       }
 
       const repository = await response.json();
-      console.log(repository);
+      //console.log(repository);
       setRepoData(repository);
     } catch (err) {
       setRepoError(err);
     } finally {
       setIsRepoLoading(false);
     }
+  };
+
+  const toggleShowAll = () => {
+    //sets to TRUE if FALSE and sets to FALSE if TRUE
+    setShowAll(!showAll);
   };
 
   //FETCH DATA ON INITIAL PAGE LOAD
@@ -194,10 +182,6 @@ function App() {
   useEffect(() => {
     fetchRepo();
   }, [repoApi]);
-
-  useEffect(() => {
-    console.log(apiLink);
-  }, [apiLink]);
 
   return (
     <div className="App">
@@ -238,7 +222,7 @@ function App() {
         </main>
       )}
 
-      {!isLoading && !timeout && !wrongUsername && (
+      {!isLoading && (
         <main>
           <div className="profileDetails">
             <img src={profileImg} alt="profile image" className="profileImg" />
@@ -268,7 +252,7 @@ function App() {
 
           <div className="repositoryGrp">
             {repoData !== null &&
-              repoData.map((element, index) => (
+              reposToShow.map((element, index) => (
                 <a href={element.clone_url} className="repository" key={index}>
                   <h1 className="repoName">{element.name}</h1>
 
@@ -290,24 +274,15 @@ function App() {
                 </a>
               ))}
           </div>
+
+          <button
+            className="w-fit mx-auto block font-semibold mt-7 py-3 cursor-pointer"
+            onClick={toggleShowAll}
+          >
+            {buttonText}
+          </button>
         </main>
       )}
-
-      {/* {wrongUsername && !isLoading && (
-        <main className="loadingScreen">
-          <h1 className="w-fit mx-auto pt-20 text-6xl font-bold">
-            USER DOES NOT EXIST
-          </h1>
-        </main>
-      )}
-
-      {timeout && !isLoading && (
-        <main className="loadingScreen">
-          <h1 className="w-fit mx-auto pt-20 text-6xl font-bold">
-            TIMEOUT TRY AGAIN LATER
-          </h1>
-        </main>
-      )} */}
     </div>
   );
 }
