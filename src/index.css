@@ -11,7 +11,7 @@ header {
 }
 
 .searchGrp {
-  @apply w-10/12 md:w-2/3 lg:w-4/12 flex flex-row items-center bg-mainBg text-textColor p-2 mx-auto  rounded-lg gap-2;
+  @apply w-10/12 md:w-2/3 lg:w-4/12 flex flex-row items-center bg-mainBg  p-2 mx-auto  rounded-lg gap-2;
 }
 
 input {
@@ -19,7 +19,7 @@ input {
 }
 
 main {
-  @apply px-5 lg:px-20 pb-10 bg-mainBg min-h-screen lg:min-h-96 relative;
+  @apply px-5 lg:px-20 pb-10 bg-mainBg min-h-screen relative;
 }
 
 .profileDetails {
