@@ -23,6 +23,7 @@ function App() {
   const [apiData, setApidData] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [responseCode, setResponseCode] = useState(0);
 
   const [repoApi, setRepoApi] = useState("");
   const [repoData, setRepoData] = useState([]);
@@ -33,13 +34,17 @@ function App() {
   const buttonText = showAll ? "Show less" : "Show all";
 
   const fetchData = async () => {
+    setIsLoading(true);
+
     try {
       const response = await fetch(apiLink);
 
       if (!response.ok) {
         if (response.status === 404) {
+          setResponseCode(404);
           throw new Error(`${username} not found`);
         } else if (response.status === 403) {
+          setResponseCode(403);
           throw new Error(`timeout`);
         } else {
           throw new Error(
@@ -49,7 +54,7 @@ function App() {
       }
 
       const data = await response.json();
-      //console.log(data);
+      console.log(data);
 
       setApidData(data);
 
@@ -62,7 +67,7 @@ function App() {
       setLocation(data.location);
     } catch (err) {
       setError(err);
-      alert(err);
+      console.log(err);
     } finally {
       setIsLoading(false);
     }
@@ -85,6 +90,14 @@ function App() {
       setIsRepoLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log(isLoading);
+  }, [isLoading]);
+
+  useEffect(() => {
+    console.log(responseCode);
+  }, [responseCode]);
 
   //FETCH DATA ON INITIAL PAGE LOAD
   useEffect(() => {
@@ -132,13 +145,15 @@ function App() {
         </form>
       </header>
 
+      {/* laoding */}
       {isLoading && (
         <main className="loadingScreen">
-          <h1 className="w-fit mx-auto pt-20 text-6xl font-bold">LOADING</h1>
+          <h1 className="w-fit mx-auto pt-20 text-6xl font-bold">LOADING...</h1>
         </main>
       )}
 
-      {!isLoading && (
+      {/* success */}
+      {!isLoading && responseCode !== 403 && (
         <main>
           <div className="profileDetails">
             <img src={profileImg} alt="profile image" className="profileImg" />
@@ -162,9 +177,11 @@ function App() {
           </div>
 
           <div className="pt-60 md:pt-20">
-            <h1 className="text-4xl">{displayName}</h1>
+            <h1 className="text-4xl md:text-6xl">{displayName}</h1>
             <p className="text-sm pt-2">{bio}.</p>
           </div>
+
+          <h1 className="text-2xl mt-10">{displayName}'s public repos</h1>
 
           <div className="repositoryGrp">
             {repoData !== null &&
@@ -202,6 +219,22 @@ function App() {
           >
             {buttonText}
           </button>
+        </main>
+      )}
+
+      {/* API timeout */}
+      {responseCode === 403 && !isLoading && (
+        <main className="loadingScreen">
+          <h1 className="w-fit mx-auto pt-20 text-6xl font-bold">TIMEOUT...</h1>
+        </main>
+      )}
+
+      {/* username not found */}
+      {responseCode === 404 && !isLoading && (
+        <main className="loadingScreen">
+          <h1 className="w-fit mx-auto pt-20 text-6xl font-bold">
+            {username} NOT FOUND...
+          </h1>
         </main>
       )}
     </div>

@@ -27,7 +27,7 @@ main {
 }
 
 .profileImg {
-  @apply w-20 md:w-24 h-20 md:h-24 rounded-xl border-8 border-b-0 border-mainBg;
+  @apply w-20 md:w-24 h-20 md:h-24 rounded-xl border-8 border-b-0 border-mainBg bg-mainBg;
 }
 
 .detailsGrp {
